@@ -2,6 +2,10 @@
 
 ## A Chip8 emulator in C# using MonoGame. 
 
+![Chipster8 Screenshot 1](/Screenshots/Chipster-1.png?raw=true)
+![Chipster8 Screenshot 2](/Screenshots/Chipster-2.png?raw=true)
+![Chipster8 Screenshot 3](/Screenshots/Chipster-3.png?raw=true)
+
 ## About
 Chipster8 was built in C#9 and .NET 5 using MonoGame 3.8 with the multi-platform OpenGL template, making it available to run on Windows, Mac, or Linux.
 
