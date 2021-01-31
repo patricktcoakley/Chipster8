@@ -7,7 +7,7 @@
 ![Chipster8 Screenshot 3](/Screenshots/Chipster-3.png?raw=true)
 
 ## About
-Chipster8 was built in C#9 and .NET 5 using MonoGame 3.8 with the multi-platform OpenGL template, making it available to run on Windows, Mac, or Linux.
+Chipster8 was built using MonoGame 3.8 with support for OpenGL and DirectX desktop clients.
 
 It has the following features:
 - Increase/decrease emulation speed
@@ -15,6 +15,8 @@ It has the following features:
 - Pause/Resume
 
 The Chip8 emulator and application are separated such that one could pull out the Chip8 and re-use it in another way.
+
+*Note: Chip8 implementations by nature have a decent amount of flickering due to the way draw calls are implemented, and without writing against the original spec it is an unfortunate side effect of playing Chip8 games.*
 
 ## Controls
 
