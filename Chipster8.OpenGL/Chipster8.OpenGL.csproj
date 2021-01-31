@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
     <PropertyGroup>
         <OutputType>WinExe</OutputType>
-        <TargetFramework>net5.0</TargetFramework>
+        <TargetFramework>netcoreapp3.1</TargetFramework>
         <PublishReadyToRun>false</PublishReadyToRun>
         <TieredCompilation>false</TieredCompilation>
     </PropertyGroup>
@@ -10,12 +10,6 @@
         <ApplicationIcon>Icon.ico</ApplicationIcon>
     </PropertyGroup>
     <ItemGroup>
-        <None Remove="Icon.bmp" />
-    </ItemGroup>
-    <ItemGroup>
-        <EmbeddedResource Include="Icon.bmp" />
-    </ItemGroup>
-    <ItemGroup>
         <TrimmerRootAssembly Include="Microsoft.Xna.Framework.Content.ContentTypeReader" Visible="false" />
     </ItemGroup>
     <ItemGroup>
@@ -23,6 +17,11 @@
         <PackageReference Include="MonoGame.Content.Builder.Task" Version="3.8.0.1641" />
     </ItemGroup>
     <ItemGroup>
-      <ProjectReference Include="..\Chip8\Chip8.csproj" />
+      <ProjectReference Include="..\Chipster8.Core\Chipster8.Core.csproj" />
+    </ItemGroup>
+    <ItemGroup>
+        <MonoGameContentReference Include="..\Chipster8.Core\Content\Content.mgcb">
+            <Link>Content\Content.mgcb</Link>
+        </MonoGameContentReference>
     </ItemGroup>
 </Project>

@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Diagnostics;
-using System.IO;
 using System.Text;
 
 namespace Chip8
@@ -59,14 +58,12 @@ namespace Chip8
         public bool[] Keypad = new bool[16];
         public byte[] Video = new byte[2048];
         private byte RandomByte() => (byte) _random.Next(0xFF);
-        public void PowerOn() => State = Chip8State.Running;
         public bool ShouldPlaySound { get; set; }
         public bool HasColor(int i) => Video[i] == 0x0;
         public bool IsOn() => PC <= ProgramSize && (State == Chip8State.Running || State == Chip8State.Paused);
         public bool IsRunning() => State == Chip8State.Running;
         public bool IsPaused() => State == Chip8State.Paused;
         public bool IsOff() => State == Chip8State.Off;
-
         public void Pause() =>
             State = State switch
             {
@@ -74,7 +71,9 @@ namespace Chip8
                 Chip8State.Running => Chip8State.Paused,
                 _ => State
             };
-
+        public void PowerOn() => State = Chip8State.Running;
+        public void PowerOff() => State = Chip8State.Off;
+        
         public Chip8()
         {
             PC = ProgramStartAddress;
@@ -82,20 +81,10 @@ namespace Chip8
             _fonts.CopyTo(Memory, 0);
         }
 
-        public void LoadRom(string title)
+        public void LoadRom(byte[] rom)
         {
-            var path = Path.Combine("Roms", title);
-            if (!File.Exists(path))
-            {
-                throw new FileNotFoundException($"{path} is not a valid ROM title!");
-            }
-
-            Debug.WriteLine($"Loading {path}");
-            using var reader = new BinaryReader(File.Open(path, FileMode.Open, FileAccess.Read, FileShare.Read));
-            var bytes = reader.ReadBytes((int) reader.BaseStream.Length);
-            bytes.CopyTo(Memory, ProgramStartAddress);
-            ProgramSize = bytes.Length + ProgramStartAddress;
-            State = Chip8State.Running;
+            rom.CopyTo(Memory, ProgramStartAddress);
+            ProgramSize = rom.Length + ProgramStartAddress;
         }
 
         public void Step()
@@ -343,10 +332,9 @@ namespace Chip8
                                 Video[spritePos] ^= 1;
                             }
                         }
-
-                        ShouldDraw = true;
                     }
-
+                    
+                    ShouldDraw = true;
                     Debug.WriteLine(
                         $"0x{opcode:X} -> DXYN: DRW Vx, Vy, nibble - Display n-byte sprite starting at I to coordinates (Vx, Vy), Set VF = collision");
                     break;

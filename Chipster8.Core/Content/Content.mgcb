@@ -1,0 +1,100 @@
+
+#----------------------------- Global Properties ----------------------------#
+
+/outputDir:bin
+/intermediateDir:obj
+/platform:Windows
+/config:
+/profile:Reach
+/compress:False
+
+#-------------------------------- References --------------------------------#
+
+
+#---------------------------------- Content ---------------------------------#
+
+#begin Beep.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Beep.wav
+
+#begin ChakraPetch-Light.ttf
+/copy:ChakraPetch-Light.ttf
+
+#begin Font.spritefont
+/importer:FontDescriptionImporter
+/processor:FontDescriptionProcessor
+/processorParam:PremultiplyAlpha=True
+/processorParam:TextureFormat=Compressed
+/build:Font.spritefont
+
+#begin Roms/15PUZZLE
+/copy:Roms/15PUZZLE
+
+#begin Roms/BLINKY
+/copy:Roms/BLINKY
+
+#begin Roms/BLITZ
+/copy:Roms/BLITZ
+
+#begin Roms/BRIX
+/copy:Roms/BRIX
+
+#begin Roms/CONNECT4
+/copy:Roms/CONNECT4
+
+#begin Roms/GUESS
+/copy:Roms/GUESS
+
+#begin Roms/HIDDEN
+/copy:Roms/HIDDEN
+
+#begin Roms/INVADERS
+/copy:Roms/INVADERS
+
+#begin Roms/KALEID
+/copy:Roms/KALEID
+
+#begin Roms/MAZE
+/copy:Roms/MAZE
+
+#begin Roms/MERLIN
+/copy:Roms/MERLIN
+
+#begin Roms/MISSILE
+/copy:Roms/MISSILE
+
+#begin Roms/PONG
+/copy:Roms/PONG
+
+#begin Roms/PONG2
+/copy:Roms/PONG2
+
+#begin Roms/PUZZLE
+/copy:Roms/PUZZLE
+
+#begin Roms/SYZYGY
+/copy:Roms/SYZYGY
+
+#begin Roms/TANK
+/copy:Roms/TANK
+
+#begin Roms/TETRIS
+/copy:Roms/TETRIS
+
+#begin Roms/TICTAC
+/copy:Roms/TICTAC
+
+#begin Roms/UFO
+/copy:Roms/UFO
+
+#begin Roms/VBRIX
+/copy:Roms/VBRIX
+
+#begin Roms/VERS
+/copy:Roms/VERS
+
+#begin Roms/WIPEOFF
+/copy:Roms/WIPEOFF
+

@@ -8,13 +8,13 @@ using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 
-namespace Chipster8
+namespace Chipster8.Core
 {
-    public class Chipster8 : Game
+    public class Chipster8Game : Game
     {
         private readonly GraphicsDeviceManager _graphics;
         private readonly Color[] _pixels = new Color[2048];
-        private readonly List<string> _roms = new();
+        private readonly List<string> _romTitles = new();
         private bool _isMuted;
         private SpriteBatch _spriteBatch;
         private Chip8.Chip8 _chip8 = new();
@@ -53,9 +53,9 @@ namespace Chipster8
                 {
                     _currentRom = 0;
                 }
-                else if (value >= _roms.Count)
+                else if (value >= _romTitles.Count)
                 {
-                    _currentRom = _roms.Count - 1;
+                    _currentRom = _romTitles.Count - 1;
                 }
                 else
                 {
@@ -80,10 +80,9 @@ namespace Chipster8
             set => _currentColorScheme = value;
         }
 
-        public Chipster8()
+        public Chipster8Game()
         {
             _graphics = new GraphicsDeviceManager(this);
-            Content.RootDirectory = "Content";
         }
 
         private void PlaySound()
@@ -106,19 +105,22 @@ namespace Chipster8
             _graphics.PreferredBackBufferHeight = 640;
             _graphics.ApplyChanges();
             _scaleSize = GraphicsDevice.PresentationParameters.Bounds;
-            _canvas = new Texture2D(GraphicsDevice, Chip8.Chip8.VideoWidth, Chip8.Chip8.VideoHeight, true, SurfaceFormat.Color);
-            _roms.AddRange(Directory.GetFiles("Roms").Select(Path.GetFileName));
-            _roms.Sort();
-            _roms.Add("Exit");
-            _beepInstance = Content.Load<SoundEffect>("Beep").CreateInstance();
-
             base.Initialize();
         }
 
         protected override void LoadContent()
         {
+            Content.RootDirectory = "Content";
+            _canvas = new Texture2D(GraphicsDevice, Chip8.Chip8.VideoWidth, Chip8.Chip8.VideoHeight, true, SurfaceFormat.Color);
             _spriteBatch = new SpriteBatch(GraphicsDevice);
             _font = Content.Load<SpriteFont>("Font");
+            _beepInstance = Content.Load<SoundEffect>("Beep").CreateInstance();
+            
+            var rootPath = Path.Combine(Content.RootDirectory, "Roms");
+            _romTitles.AddRange(Directory.GetFiles(rootPath).Select(Path.GetFileName));
+            _romTitles.Sort();
+            _romTitles.Add("Exit");
+
             base.LoadContent();
         }
 
@@ -162,16 +164,14 @@ namespace Chipster8
 
                 if (CanBePressed(Keys.Enter))
                 {
-                    var selection = _roms[CurrentRom];
+                    var selection = _romTitles[CurrentRom];
                     if (selection.Equals("Exit"))
                     {
                         Exit();
                     }
                     else
                     {
-                        _chip8 = new Chip8.Chip8();
-                        _chip8.PowerOn();
-                        _chip8.LoadRom(_roms[CurrentRom]);
+                        LoadSelection(selection);
                     }
                 }
             }
@@ -307,11 +307,25 @@ namespace Chipster8
                     }
                 }
 
-                Array.Fill(_chip8.Keypad, false);
+                for (var i = 0; i < _chip8.Keypad.Length; ++i)
+                {
+                    _chip8.Keypad[i] = false;
+                }
             }
 
             _previousKeyboardState = _keyboardState;
             base.Update(gameTime);
+        }
+
+        private void LoadSelection(string selection)
+        {
+            var rootPath = Path.Combine(Content.RootDirectory, "Roms");
+            var path = Path.Combine(rootPath, selection);
+            using var reader = new BinaryReader(File.Open(path, FileMode.Open, FileAccess.Read, FileShare.Read));
+            var bytes = reader.ReadBytes((int) reader.BaseStream.Length);
+            _chip8 = new Chip8.Chip8();
+            _chip8.LoadRom(bytes);
+            _chip8.PowerOn();
         }
 
         protected override void Draw(GameTime gameTime)
@@ -326,11 +340,11 @@ namespace Chipster8
                 var x = Math.Abs(_graphics.PreferredBackBufferWidth * 0.43f);
                 var y = step;
 
-                _spriteBatch.DrawString(_font, _roms[CurrentRom], new Vector2(x, 0), Color.Blue);
+                _spriteBatch.DrawString(_font, _romTitles[CurrentRom], new Vector2(x, 0), Color.Blue);
 
-                for (var i = CurrentRom + 1; i < _roms.Count; ++i)
+                for (var i = CurrentRom + 1; i < _romTitles.Count; ++i)
                 {
-                    _spriteBatch.DrawString(_font, _roms[i], new Vector2(x, y), Color.White);
+                    _spriteBatch.DrawString(_font, _romTitles[i], new Vector2(x, y), Color.White);
                     y += step;
                 }
 
