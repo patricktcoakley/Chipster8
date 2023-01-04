@@ -336,7 +336,7 @@ namespace Chipster8.Core
                 _spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointClamp,
                     DepthStencilState.None);
 
-                const uint step = 75;
+                const uint step = 75;  
                 var x = Math.Abs(_graphics.PreferredBackBufferWidth * 0.43f);
                 var y = step;
 
