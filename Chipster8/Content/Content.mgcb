@@ -1,15 +1,17 @@
 
 #----------------------------- Global Properties ----------------------------#
 
-/outputDir:bin
-/intermediateDir:obj
-/platform:Windows
+/outputDir:bin/$(Platform)
+/intermediateDir:obj/$(Platform)
+/platform:DesktopGL
 /config:
 /profile:Reach
 /compress:False
 
 #-------------------------------- References --------------------------------#
 
+
+#---------------------------------- Content ---------------------------------#
 
 #---------------------------------- Content ---------------------------------#
 
@@ -97,4 +99,3 @@
 
 #begin Roms/WIPEOFF
 /copy:Roms/WIPEOFF
-

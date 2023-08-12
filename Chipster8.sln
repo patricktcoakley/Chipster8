@@ -5,11 +5,7 @@ VisualStudioVersion = 16.0.30907.101
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Chip8", "Chip8\Chip8.csproj", "{CF428484-3365-4A08-B7B0-0451FB414BA9}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Chipster8.Core", "Chipster8.Core\Chipster8.Core.csproj", "{6924BE9A-3047-495A-8249-5195617517D2}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Chipster8.DirectX", "Chipster8.DirectX\Chipster8.DirectX.csproj", "{002A8B4C-C21C-4722-8F03-17CF9108D445}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Chipster8.OpenGL", "Chipster8.OpenGL\Chipster8.OpenGL.csproj", "{9DD087D5-E3EC-406A-B084-1A80A9BABA0D}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Chipster8", "Chipster8\Chipster8.csproj", "{2C9CE747-2AA0-4EE6-A695-622A2DDD3C69}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,18 +17,10 @@ Global
 		{CF428484-3365-4A08-B7B0-0451FB414BA9}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{CF428484-3365-4A08-B7B0-0451FB414BA9}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{CF428484-3365-4A08-B7B0-0451FB414BA9}.Release|Any CPU.Build.0 = Release|Any CPU
-		{6924BE9A-3047-495A-8249-5195617517D2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{6924BE9A-3047-495A-8249-5195617517D2}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{6924BE9A-3047-495A-8249-5195617517D2}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{6924BE9A-3047-495A-8249-5195617517D2}.Release|Any CPU.Build.0 = Release|Any CPU
-		{002A8B4C-C21C-4722-8F03-17CF9108D445}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{002A8B4C-C21C-4722-8F03-17CF9108D445}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{002A8B4C-C21C-4722-8F03-17CF9108D445}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{002A8B4C-C21C-4722-8F03-17CF9108D445}.Release|Any CPU.Build.0 = Release|Any CPU
-		{9DD087D5-E3EC-406A-B084-1A80A9BABA0D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{9DD087D5-E3EC-406A-B084-1A80A9BABA0D}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{9DD087D5-E3EC-406A-B084-1A80A9BABA0D}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{9DD087D5-E3EC-406A-B084-1A80A9BABA0D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2C9CE747-2AA0-4EE6-A695-622A2DDD3C69}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2C9CE747-2AA0-4EE6-A695-622A2DDD3C69}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2C9CE747-2AA0-4EE6-A695-622A2DDD3C69}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2C9CE747-2AA0-4EE6-A695-622A2DDD3C69}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
