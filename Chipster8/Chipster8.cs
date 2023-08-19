@@ -129,7 +129,7 @@ public class Chipster8 : Game
 
         if (CanBePressed(Keys.Escape))
         {
-            if (_chip8.IsRunning)
+            if (_chip8.State == Chip8State.Running)
             {
                 _chip8.State = Chip8State.Off;
             }
