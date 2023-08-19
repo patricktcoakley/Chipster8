@@ -14,10 +14,6 @@ public class Chip8
     public Memory Memory { get; } = new();
     public Chip8State State { get; set; } = Chip8State.Off;
     public bool ShouldPlaySound { get; set; }
-    public bool IsOn => Memory.PC <= Memory.ProgramSize && State is Chip8State.Running or Chip8State.Paused;
-    public bool IsRunning => State == Chip8State.Running;
-    public bool IsPaused => State == Chip8State.Paused;
-    public bool IsOff => State == Chip8State.Off;
 
     public void Pause() =>
         State = State switch
@@ -30,18 +26,15 @@ public class Chip8
     public void Run(byte[] rom)
     {
         Memory.LoadRom(rom);
-        PowerOn();
+        State = Chip8State.Running;
     }
 
-    public void PowerOn() => State = Chip8State.Running;
-    public void PowerOff() => State = Chip8State.Off;
 
     public void Step()
     {
         var opcode = Memory.Opcode;
         CPU.SkipNextInstruction(Memory);
         CPU.Execute(opcode, Memory);
-
 
         if (Memory.DT > 0)
         {
