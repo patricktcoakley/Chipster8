@@ -4,8 +4,8 @@ namespace Chip8;
 
 public class Memory
 {
-    internal const byte CharSize = 0x5;
-    private const ushort ProgramStartAddress = 0x200;
+    public const ushort ProgramStartAddress = 0x200;
+    public const byte CharSize = 0x5;
 
     private readonly byte[] _fonts =
     {
@@ -49,10 +49,14 @@ public class Memory
 
     public byte VF
     {
+        get => Registers[15];
         set => Registers[15] = value;
     }
 
-    public ushort Opcode => (ushort)(RAM[PC] << 8 | RAM[PC + 1]);
+    public ushort Opcode
+    {
+        get => (ushort)(RAM[PC] << 8 | RAM[PC + 1]);
+    }
 
     public void LoadRom(byte[] rom)
     {

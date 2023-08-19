@@ -3,11 +3,11 @@ using System.Diagnostics;
 
 namespace Chip8;
 
-internal static class CPU
+static public class CPU
 {
     internal static void SkipNextInstruction(Memory memory) => memory.PC += 2;
 
-    internal static void Execute(ushort opcode, Memory memory)
+    static public void Execute(ushort opcode, Memory memory)
     {
         var c = (ushort)((opcode & 0xF000) >> 12);
         var x = (ushort)((opcode & 0x0F00) >> 8);
@@ -86,7 +86,7 @@ internal static class CPU
                 OpCXKK(opcode, memory, x, nn);
                 break;
             case (0xD, _, _, _):
-                OpDXYN(opcode, memory, d, y, x);
+                OpDXYN(opcode, memory, d, x, y);
                 break;
             case (0xE, _, 0x9, 0xE):
                 OpEX9E(opcode, memory, x);
@@ -133,16 +133,16 @@ internal static class CPU
         Array.Clear(memory.Video, 0, memory.Video.Length);
     }
 
-    private static void Op1NNN(ushort opcode, Memory memory, ushort nnn)
-    {
-        Debug.WriteLine($"0x{opcode:X} -> 1NNN: JP addr - Jump to address");
-        memory.PC = nnn;
-    }
-
     private static void Op00EE(ushort opcode, Memory memory)
     {
         Debug.WriteLine($"0x{opcode:X} -> 00EE: RET - Return");
         memory.PC = memory.Stack[--memory.SP];
+    }
+
+    private static void Op1NNN(ushort opcode, Memory memory, ushort nnn)
+    {
+        Debug.WriteLine($"0x{opcode:X} -> 1NNN: JP addr - Jump to address");
+        memory.PC = nnn;
     }
 
     private static void Op2NNN(ushort opcode, Memory memory, ushort nnn)
@@ -152,7 +152,7 @@ internal static class CPU
         memory.PC = nnn;
     }
 
-    private static void Op3XKK(ushort opcode, Memory memory, int x, ushort nn)
+    private static void Op3XKK(ushort opcode, Memory memory, ushort x, ushort nn)
     {
         Debug.WriteLine($"0x{opcode:X} -> 3XKK: SE Vx, byte - Skip next instruction if Vx = byte");
         if (memory.Registers[x] == nn)
@@ -161,7 +161,7 @@ internal static class CPU
         }
     }
 
-    private static void Op4XKK(ushort opcode, Memory memory, int x, ushort nn)
+    private static void Op4XKK(ushort opcode, Memory memory, ushort x, ushort nn)
     {
         Debug.WriteLine($"0x{opcode:X} -> 4XKK: SNE Vx, byte - Skip next instruction if Vx != byte");
         if (memory.Registers[x] != nn)
@@ -170,7 +170,7 @@ internal static class CPU
         }
     }
 
-    private static void Op5XY0(ushort opcode, Memory memory, int x, int y)
+    private static void Op5XY0(ushort opcode, Memory memory, ushort x, ushort y)
     {
         Debug.WriteLine($"0x{opcode:X} -> 5XY0: SE Vx, Vy - Skip next instruction if Vx = Vy");
         if (memory.Registers[x] == memory.Registers[y])
@@ -179,51 +179,51 @@ internal static class CPU
         }
     }
 
-    private static void Op6XKK(ushort opcode, Memory memory, int x, ushort nn)
+    private static void Op6XKK(ushort opcode, Memory memory, ushort x, ushort nn)
     {
         Debug.WriteLine($"0x{opcode:X} -> 6XKK: LD Vx, byte - Set Vx = byte");
         memory.Registers[x] = (byte)nn;
     }
 
-    private static void Op7XKK(ushort opcode, Memory memory, int x, ushort nn)
+    private static void Op7XKK(ushort opcode, Memory memory, ushort x, ushort nn)
     {
         Debug.WriteLine($"0x{opcode:X} -> 7XKK: ADD Vx, byte - Add byte to Vx");
         memory.Registers[x] += (byte)nn;
     }
 
-    private static void Op8XY0(ushort opcode, Memory memory, int x, int y)
+    private static void Op8XY0(ushort opcode, Memory memory, ushort x, ushort y)
     {
         Debug.WriteLine($"0x{opcode:X} -> 8XY0: LD Vx, Vy - Set Vx = Vy");
         memory.Registers[x] = memory.Registers[y];
     }
 
-    private static void Op8XY1(ushort opcode, Memory memory, int x, int y)
+    private static void Op8XY1(ushort opcode, Memory memory, ushort x, ushort y)
     {
         Debug.WriteLine($"0x{opcode:X} -> 8XY1: OR Vx, Vy - Set Vx = Vx OR Vy");
         memory.Registers[x] |= memory.Registers[y];
     }
 
-    private static void Op8XY2(ushort opcode, Memory memory, int x, int y)
+    private static void Op8XY2(ushort opcode, Memory memory, ushort x, ushort y)
     {
         Debug.WriteLine($"0x{opcode:X} -> 8XY2 AND Vx, Vy - Set Vx = Vx AND Vy");
         memory.Registers[x] &= memory.Registers[y];
     }
 
-    private static void Op8XY3(ushort opcode, Memory memory, int x, int y)
+    private static void Op8XY3(ushort opcode, Memory memory, ushort x, ushort y)
     {
         Debug.WriteLine($"0x{opcode:X} -> 8XY3: XOR Vx, Vy - Set Vx = Vx XOR Vy");
         memory.Registers[x] ^= memory.Registers[y];
     }
 
-    private static void Op8XY4(ushort opcode, Memory memory, int x, int y)
+    private static void Op8XY4(ushort opcode, Memory memory, ushort x, ushort y)
     {
         Debug.WriteLine($"0x{opcode:X} -> 8XY4: ADD Vx, Vy - Set Vx = Vx + Vy, Set VF = carry");
-        var result = (ushort)(memory.Registers[x] + memory.Registers[y]);
+        var result = memory.Registers[x] + memory.Registers[y];
         memory.Registers[x] = (byte)(result & 0xFF);
         memory.VF = (byte)(result > 0xFF ? 1 : 0);
     }
 
-    private static void Op8XY5(ushort opcode, Memory memory, int x, int y)
+    private static void Op8XY5(ushort opcode, Memory memory, ushort x, ushort y)
     {
         Debug.WriteLine($"0x{opcode:X} -> 8XY5: SUB Vx, Vy - Set Vx = Vx - Vy, Set VF = not borrow");
         var updatedVF = (byte)(memory.Registers[x] > memory.Registers[y] ? 1 : 0);
@@ -231,7 +231,7 @@ internal static class CPU
         memory.VF = updatedVF;
     }
 
-    private static void Op8XY6(ushort opcode, Memory memory, int x)
+    private static void Op8XY6(ushort opcode, Memory memory, ushort x)
     {
         Debug.WriteLine($"0x{opcode:X} -> 8XY6: SHR Vx - Set Vx = Vx SHR 1");
         var updatedVF = (byte)(memory.Registers[x] & 1);
@@ -239,7 +239,7 @@ internal static class CPU
         memory.VF = updatedVF;
     }
 
-    private static void Op8XY7(ushort opcode, Memory memory, int x, int y)
+    private static void Op8XY7(ushort opcode, Memory memory, ushort x, ushort y)
     {
         Debug.WriteLine($"0x{opcode:X} -> 8XY7: SUB Vx, Vy - Set Vx = Vy - Vx, Set VF = not borrow");
         var updatedVF = (byte)(memory.Registers[x] < memory.Registers[y] ? 1 : 0);
@@ -247,7 +247,7 @@ internal static class CPU
         memory.VF = updatedVF;
     }
 
-    private static void Op8XYE(ushort opcode, Memory memory, int x)
+    private static void Op8XYE(ushort opcode, Memory memory, ushort x)
     {
         Debug.WriteLine($"0x{opcode:X} -> 8XYE - SHL Vx - Set Vx = Vx SHL 1");
         var updatedVF = (byte)((memory.Registers[x] & 0x80) >> 7);
@@ -255,7 +255,7 @@ internal static class CPU
         memory.VF = updatedVF;
     }
 
-    private static void Op9XY0(ushort opcode, Memory memory, int x, int y)
+    private static void Op9XY0(ushort opcode, Memory memory, ushort x, ushort y)
     {
         Debug.WriteLine($"0x{opcode:X} -> 9XY0: SNE Vx, Vy - Skip next instruction if Vx != Vy");
         if (memory.Registers[x] != memory.Registers[y])
@@ -276,13 +276,13 @@ internal static class CPU
         memory.PC = memory.Registers[nnn];
     }
 
-    private static void OpCXKK(ushort opcode, Memory memory, int x, ushort nn)
+    private static void OpCXKK(ushort opcode, Memory memory, ushort x, ushort nn)
     {
         Debug.WriteLine($"0x{opcode:X} -> CXKK: RND Vx, byte - Set Vx = random byte AND byte");
         memory.Registers[x] = (byte)(memory.RandomByte() & nn);
     }
 
-    private static void OpDXYN(ushort opcode, Memory memory, ushort d, int y, int x)
+    private static void OpDXYN(ushort opcode, Memory memory, ushort d, ushort x, ushort y)
     {
         Debug.WriteLine(
             $"0x{opcode:X} -> DXYN: DRW Vx, Vy, nibble - Display n-byte sprite starting at I to coordinates (Vx, Vy), Set VF = collision");
@@ -304,7 +304,7 @@ internal static class CPU
         }
     }
 
-    private static void OpEX9E(ushort opcode, Memory memory, int x)
+    private static void OpEX9E(ushort opcode, Memory memory, ushort x)
     {
         Debug.WriteLine(
             $"0x{opcode:X} -> EX9E: SKP Vx - Skip next instruction if key with the value of Vx is pressed");
@@ -315,7 +315,7 @@ internal static class CPU
         }
     }
 
-    private static void OpEXA1(ushort opcode, Memory memory, int x)
+    private static void OpEXA1(ushort opcode, Memory memory, ushort x)
     {
         Debug.WriteLine(
             $"0x{opcode:X} -> EXA1: SKNP Vx - Skip next instruction if key with the value of Vx is not pressed");
@@ -326,78 +326,19 @@ internal static class CPU
         }
     }
 
-    private static void OpFX07(ushort opcode, Memory memory, int x)
+    private static void OpFX07(ushort opcode, Memory memory, ushort x)
     {
         Debug.WriteLine($"0x{opcode:X} -> FX07: LD Vx, memory.DT - Set Vx = delay timer");
         memory.Registers[x] = memory.DT;
     }
 
-    private static void OpFX0A(ushort opcode, Memory memory, int x)
+    private static void OpFX0A(ushort opcode, Memory memory, ushort x)
     {
         Debug.WriteLine($"0x{opcode:X} -> FX0A: LD Vx, K - Wait for key press and store the value into Vx");
-        if (memory.Keypad[0])
+        var activeKeypad = Array.FindIndex(memory.Keypad, keypad => keypad);
+        if (activeKeypad >= 0)
         {
-            memory.Registers[x] = 0;
-        }
-        else if (memory.Keypad[1])
-        {
-            memory.Registers[x] = 1;
-        }
-        else if (memory.Keypad[2])
-        {
-            memory.Registers[x] = 2;
-        }
-        else if (memory.Keypad[3])
-        {
-            memory.Registers[x] = 3;
-        }
-        else if (memory.Keypad[4])
-        {
-            memory.Registers[x] = 4;
-        }
-        else if (memory.Keypad[5])
-        {
-            memory.Registers[x] = 5;
-        }
-        else if (memory.Keypad[6])
-        {
-            memory.Registers[x] = 6;
-        }
-        else if (memory.Keypad[7])
-        {
-            memory.Registers[x] = 7;
-        }
-        else if (memory.Keypad[8])
-        {
-            memory.Registers[x] = 8;
-        }
-        else if (memory.Keypad[9])
-        {
-            memory.Registers[x] = 9;
-        }
-        else if (memory.Keypad[10])
-        {
-            memory.Registers[x] = 10;
-        }
-        else if (memory.Keypad[11])
-        {
-            memory.Registers[x] = 11;
-        }
-        else if (memory.Keypad[12])
-        {
-            memory.Registers[x] = 12;
-        }
-        else if (memory.Keypad[13])
-        {
-            memory.Registers[x] = 13;
-        }
-        else if (memory.Keypad[14])
-        {
-            memory.Registers[x] = 14;
-        }
-        else if (memory.Keypad[15])
-        {
-            memory.Registers[x] = 15;
+            memory.Registers[x] = (byte)activeKeypad;
         }
         else
         {
@@ -405,25 +346,25 @@ internal static class CPU
         }
     }
 
-    private static void OpFX15(ushort opcode, Memory memory, int x)
+    private static void OpFX15(ushort opcode, Memory memory, ushort x)
     {
         Debug.WriteLine($"0x{opcode:X} -> FX15: LD memory.DT, Vx - Set delay timer = Vx");
         memory.DT = memory.Registers[x];
     }
 
-    private static void OpFX18(ushort opcode, Memory memory, int x)
+    private static void OpFX18(ushort opcode, Memory memory, ushort x)
     {
         Debug.WriteLine($"0x{opcode:X} -> FX18: LD memory.ST, Vx - Set sound timer = Vx");
         memory.ST = memory.Registers[x];
     }
 
-    private static void OpFX1E(ushort opcode, Memory memory, int x)
+    private static void OpFX1E(ushort opcode, Memory memory, ushort x)
     {
         Debug.WriteLine($"0x{opcode:X} -> FX1E: Add I, Vx - Set I = I + Vx");
         memory.I += memory.Registers[x];
     }
 
-    private static void OpFX29(ushort opcode, Memory memory, int x)
+    private static void OpFX29(ushort opcode, Memory memory, ushort x)
     {
         Debug.WriteLine(
             $"0x{opcode:X} -> FX29: LD F, Vx - Set I = location of sprite for digit Vx");
@@ -431,20 +372,21 @@ internal static class CPU
         memory.I = (ushort)(Memory.CharSize * memory.Registers[x]);
     }
 
-    private static void OpFX33(ushort opcode, Memory memory, int x)
+    private static void OpFX33(ushort opcode, Memory memory, ushort x)
     {
         Debug.WriteLine(
             $"0x{opcode:X} -> FX33: LD B, Vx - Store BCD (Binary-Coded Decimal) representation of Vx in memory locations I, I + 1, and I + 2");
 
         ushort result = memory.Registers[x];
-        memory.RAM[memory.I + 2] = (byte)(result % 10);
-        result /= 10;
-        memory.RAM[memory.I + 1] = (byte)(result % 10);
-        result /= 10;
-        memory.RAM[memory.I] = (byte)(result % 10);
+
+        for (var offset = 2; offset >= 0; offset--)
+        {
+            memory.RAM[memory.I + offset] = (byte)(result % 10);
+            result /= 10;
+        }
     }
 
-    private static void OpFX55(ushort opcode, Memory memory, int x)
+    private static void OpFX55(ushort opcode, Memory memory, ushort x)
     {
         Debug.WriteLine(
             $"0x{opcode:X} -> FX55: LD [memory.I], Vx - Store V0~Vx in memory starting at location I");
@@ -455,7 +397,7 @@ internal static class CPU
         }
     }
 
-    private static void OpFX65(ushort opcode, Memory memory, int x)
+    private static void OpFX65(ushort opcode, Memory memory, ushort x)
     {
         Debug.WriteLine(
             $"0x{opcode:X} -> FX65: LD Vx, [memory.I] - Read registers V0~Vx from memory starting at location I");
