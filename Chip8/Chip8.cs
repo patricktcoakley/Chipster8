@@ -29,7 +29,6 @@ public class Chip8
         State = Chip8State.Running;
     }
 
-
     public void Step()
     {
         var opcode = Memory.Opcode;

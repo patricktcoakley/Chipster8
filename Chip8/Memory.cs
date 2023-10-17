@@ -49,8 +49,8 @@ public class Memory
 
     public byte VF
     {
-        get => Registers[15];
-        set => Registers[15] = value;
+        get => Registers[0xF];
+        set => Registers[0xF] = value;
     }
 
     public ushort Opcode
