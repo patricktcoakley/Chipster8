@@ -287,21 +287,26 @@ static public class CPU
         Debug.WriteLine(
             $"0x{opcode:X} -> DXYN: DRW Vx, Vy, nibble - Display n-byte sprite starting at I to coordinates (Vx, Vy), Set VF = collision");
 
-        memory.VF = 0;
+        byte collision = 0;
         for (var displayY = 0; displayY < d; ++displayY)
         {
-            var yPos = (memory.Registers[y] + displayY) % Chip8.VideoHeight;
+            var pixel = memory.RAM[memory.I + displayY];
             for (var displayX = 0; displayX < 8; ++displayX)
             {
-                if ((memory.RAM[memory.I + displayY] & 0x80 >> displayX) != 0)
+                if ((pixel & 0x80 >> displayX) != 0)
                 {
                     var xPos = (memory.Registers[x] + displayX) % Chip8.VideoWidth;
-                    var spritePos = yPos * Chip8.VideoWidth + xPos;
-                    memory.VF = memory.Video[spritePos];
-                    memory.Video[spritePos] ^= 1;
+                    var yPos = (memory.Registers[y] + displayY) % Chip8.VideoHeight;
+                    var pixelPos = yPos * Chip8.VideoWidth + xPos;
+                    if (memory.Video[pixelPos] == 0x1)
+                    {
+                        collision = 1;
+                    }
+                    memory.Video[pixelPos] ^= 0x1;
                 }
             }
         }
+        memory.VF = collision;
     }
 
     private static void OpEX9E(ushort opcode, Memory memory, ushort x)

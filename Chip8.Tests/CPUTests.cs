@@ -294,10 +294,16 @@ public class CPUTests
     }
 
     [Fact]
-    public void Test_DXYN()
+    public void Test_OpDXYN()
     {
-        // TODO
-        Assert.True(true);
+        _memory.I = 0x200;
+        _memory.RAM[_memory.I] = 0x1;
+        _memory.Video[0x7] = 0x1;
+
+        CPU.Execute(0xD001, _memory);
+
+        Assert.Equal(0x0, _memory.Video[0x7]);
+        Assert.Equal(0x1, _memory.VF);
     }
 
     [Fact]
