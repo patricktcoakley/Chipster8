@@ -32,8 +32,8 @@ public class Chip8
     public void Step()
     {
         var opcode = Memory.Opcode;
-        CPU.SkipNextInstruction(Memory);
-        CPU.Execute(opcode, Memory);
+        Cpu.SkipNextInstruction(Memory);
+        Cpu.Execute(opcode, Memory);
 
         if (Memory.DT > 0)
         {

@@ -27,16 +27,14 @@ public class Chipster8 : Game
     private SoundEffectInstance _beepInstance;
     private Texture2D _canvas;
     private Chip8.Chip8 _chip8 = new();
-
     private byte _currentColorScheme;
-
-    private int _currentRom;
     private SpriteFont _font;
     private Color _foregroundColor = Color.White;
     private bool _isMuted;
     private KeyboardState _keyboardState;
     private KeyboardState _previousKeyboardState;
     private Rectangle _scaleSize;
+    private int _selectedRom;
     private byte _speed = 1;
     private SpriteBatch _spriteBatch;
 
@@ -50,28 +48,27 @@ public class Chipster8 : Game
         get => _speed;
         set => _speed = value switch
         {
-            0 => 0,
             > 10 => 10,
             _ => value
         };
     }
 
-    private int CurrentRom
+    private int SelectedRom
     {
-        get => _currentRom;
+        get => _selectedRom;
         set
         {
             if (value < 0)
             {
-                _currentRom = 0;
+                _selectedRom = 0;
             }
             else if (value >= _romTitles.Count)
             {
-                _currentRom = _romTitles.Count - 1;
+                _selectedRom = _romTitles.Count - 1;
             }
             else
             {
-                _currentRom = value;
+                _selectedRom = value;
             }
         }
     }
@@ -275,17 +272,17 @@ public class Chipster8 : Game
             case Chip8State.Off:
                 if (CanBePressed(Keys.Down))
                 {
-                    ++CurrentRom;
+                    ++SelectedRom;
                 }
 
                 if (CanBePressed(Keys.Up))
                 {
-                    --CurrentRom;
+                    --SelectedRom;
                 }
 
                 if (CanBePressed(Keys.Enter))
                 {
-                    var selection = _romTitles[CurrentRom];
+                    var selection = _romTitles[SelectedRom];
                     if (selection.Equals("Exit"))
                     {
                         Exit();
@@ -347,9 +344,9 @@ public class Chipster8 : Game
                 var x = Math.Abs(_graphics.PreferredBackBufferWidth * 0.43f);
                 var y = step;
 
-                _spriteBatch.DrawString(_font, _romTitles[CurrentRom], new Vector2(x, 0), Color.Blue);
+                _spriteBatch.DrawString(_font, _romTitles[SelectedRom], new Vector2(x, 0), Color.Blue);
 
-                for (var i = CurrentRom + 1; i < _romTitles.Count; ++i)
+                for (var i = SelectedRom + 1; i < _romTitles.Count; ++i)
                 {
                     _spriteBatch.DrawString(_font, _romTitles[i], new Vector2(x, y), Color.White);
                     y += step;

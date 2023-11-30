@@ -3,11 +3,11 @@ using System.Diagnostics;
 
 namespace Chip8;
 
-static public class CPU
+public static class Cpu
 {
     internal static void SkipNextInstruction(Memory memory) => memory.PC += 2;
 
-    static public void Execute(ushort opcode, Memory memory)
+    public static void Execute(ushort opcode, Memory memory)
     {
         var c = (ushort)((opcode & 0xF000) >> 12);
         var x = (ushort)((opcode & 0x0F00) >> 8);
@@ -302,10 +302,12 @@ static public class CPU
                     {
                         collision = 1;
                     }
+
                     memory.Video[pixelPos] ^= 0x1;
                 }
             }
         }
+
         memory.VF = collision;
     }
 
