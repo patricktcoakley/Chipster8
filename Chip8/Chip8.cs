@@ -1,17 +1,31 @@
-﻿namespace Chip8;
+﻿using System;
+
+namespace Chip8;
 
 public enum Chip8State
 {
     Running,
     Paused,
+    Finished,
     Off
 }
 
 public class Chip8
 {
-    public const ushort VideoHeight = 0x20;
-    public const ushort VideoWidth = 0x40;
-    public Memory Memory { get; } = new();
+    private Chip8(Spec spec)
+    {
+        ArgumentNullException.ThrowIfNull(spec, nameof(spec));
+        VirtualMachine = new VirtualMachine(spec);
+    }
+
+    public Chip8() : this(Spec.CosmacVIP())
+    {
+    }
+
+    public ushort VideoHeight => VirtualMachine.VideoHeight;
+    public ushort VideoWidth => VirtualMachine.VideoWidth;
+
+    public VirtualMachine VirtualMachine { get; init; }
     public Chip8State State { get; set; } = Chip8State.Off;
     public bool ShouldPlaySound { get; set; }
 
@@ -25,25 +39,30 @@ public class Chip8
 
     public void Run(byte[] rom)
     {
-        Memory.LoadRom(rom);
+        VirtualMachine.LoadRom(rom);
         State = Chip8State.Running;
     }
 
     public void Step()
     {
-        var opcode = Memory.Opcode;
-        Cpu.SkipNextInstruction(Memory);
-        Cpu.Execute(opcode, Memory);
-
-        if (Memory.DT > 0)
+        if (VirtualMachine.PC >= VirtualMachine.ProgramStartAddress + VirtualMachine.ProgramSize)
         {
-            --Memory.DT;
+            State = Chip8State.Finished;
+            return;
         }
 
-        if (Memory.ST > 0)
+        var opcode = VirtualMachine.Opcode;
+        Instruction.Execute(opcode, VirtualMachine);
+
+        if (VirtualMachine.DT > 0)
+        {
+            --VirtualMachine.DT;
+        }
+
+        if (VirtualMachine.ST > 0)
         {
             ShouldPlaySound = true;
-            --Memory.ST;
+            --VirtualMachine.ST;
         }
         else
         {

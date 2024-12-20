@@ -1,12 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using Chip8;
+﻿using Chip8;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
 
 namespace Chipster8;
 
@@ -105,7 +105,7 @@ public class Chipster8 : Game
     protected override void LoadContent()
     {
         Content.RootDirectory = "Content";
-        _canvas = new Texture2D(GraphicsDevice, Chip8.Chip8.VideoWidth, Chip8.Chip8.VideoHeight, true,
+        _canvas = new Texture2D(GraphicsDevice, _chip8.VideoWidth, _chip8.VideoHeight, true,
             SurfaceFormat.Color);
 
         _spriteBatch = new SpriteBatch(GraphicsDevice);
@@ -156,82 +156,82 @@ public class Chipster8 : Game
 
                 if (CanBeHeld(Keys.D1))
                 {
-                    _chip8.Memory.Keypad[0] = true;
+                    _chip8.VirtualMachine.Keypad[0] = true;
                 }
 
                 if (CanBeHeld(Keys.D2))
                 {
-                    _chip8.Memory.Keypad[1] = true;
+                    _chip8.VirtualMachine.Keypad[1] = true;
                 }
 
                 if (CanBeHeld(Keys.D3))
                 {
-                    _chip8.Memory.Keypad[2] = true;
+                    _chip8.VirtualMachine.Keypad[2] = true;
                 }
 
                 if (CanBeHeld(Keys.D4))
                 {
-                    _chip8.Memory.Keypad[3] = true;
+                    _chip8.VirtualMachine.Keypad[3] = true;
                 }
 
                 if (CanBeHeld(Keys.Q))
                 {
-                    _chip8.Memory.Keypad[4] = true;
+                    _chip8.VirtualMachine.Keypad[4] = true;
                 }
 
                 if (CanBeHeld(Keys.W))
                 {
-                    _chip8.Memory.Keypad[5] = true;
+                    _chip8.VirtualMachine.Keypad[5] = true;
                 }
 
                 if (CanBeHeld(Keys.E))
                 {
-                    _chip8.Memory.Keypad[6] = true;
+                    _chip8.VirtualMachine.Keypad[6] = true;
                 }
 
                 if (CanBeHeld(Keys.R))
                 {
-                    _chip8.Memory.Keypad[7] = true;
+                    _chip8.VirtualMachine.Keypad[7] = true;
                 }
 
                 if (CanBeHeld(Keys.A))
                 {
-                    _chip8.Memory.Keypad[8] = true;
+                    _chip8.VirtualMachine.Keypad[8] = true;
                 }
 
                 if (CanBeHeld(Keys.S))
                 {
-                    _chip8.Memory.Keypad[9] = true;
+                    _chip8.VirtualMachine.Keypad[9] = true;
                 }
 
                 if (CanBeHeld(Keys.D))
                 {
-                    _chip8.Memory.Keypad[10] = true;
+                    _chip8.VirtualMachine.Keypad[10] = true;
                 }
 
                 if (CanBeHeld(Keys.F))
                 {
-                    _chip8.Memory.Keypad[11] = true;
+                    _chip8.VirtualMachine.Keypad[11] = true;
                 }
 
                 if (CanBeHeld(Keys.Z))
                 {
-                    _chip8.Memory.Keypad[12] = true;
+                    _chip8.VirtualMachine.Keypad[12] = true;
                 }
 
                 if (CanBeHeld(Keys.X))
                 {
-                    _chip8.Memory.Keypad[13] = true;
+                    _chip8.VirtualMachine.Keypad[13] = true;
                 }
 
                 if (CanBeHeld(Keys.C))
                 {
-                    _chip8.Memory.Keypad[14] = true;
+                    _chip8.VirtualMachine.Keypad[14] = true;
                 }
 
                 if (CanBeHeld(Keys.V))
                 {
-                    _chip8.Memory.Keypad[15] = true;
+                    _chip8.VirtualMachine.Keypad[15] = true;
                 }
 
                 if (CanBePressed(Keys.F1))
@@ -256,9 +256,9 @@ public class Chipster8 : Game
                     PlaySound();
                 }
 
-                for (var j = 0; j < _chip8.Memory.Video.Length; ++j)
+                for (var j = 0; j < _chip8.VirtualMachine.Video.Length; ++j)
                 {
-                    _pixels[j] = _chip8.Memory.HasColor(j) ? _backgroundColor : _foregroundColor;
+                    _pixels[j] = _chip8.VirtualMachine.HasColor(j) ? _backgroundColor : _foregroundColor;
                 }
 
                 break;
@@ -294,11 +294,14 @@ public class Chipster8 : Game
                 }
 
                 break;
+            case Chip8State.Finished:
+                _chip8 = new Chip8.Chip8();
+                break;
             default:
                 throw new ArgumentOutOfRangeException();
         }
 
-        Array.Clear(_chip8.Memory.Keypad);
+        Array.Clear(_chip8.VirtualMachine.Keypad);
         _previousKeyboardState = _keyboardState;
         base.Update(gameTime);
     }
@@ -335,6 +338,7 @@ public class Chipster8 : Game
 
                 _spriteBatch.End();
                 break;
+            case Chip8State.Finished:
             case Chip8State.Off:
                 GraphicsDevice.Clear(Color.Black);
                 _spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointClamp,

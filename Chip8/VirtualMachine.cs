@@ -2,13 +2,12 @@ using System;
 
 namespace Chip8;
 
-public class Memory
+public class VirtualMachine
 {
     public const ushort ProgramStartAddress = 0x200;
-    public const byte CharSize = 0x5;
 
     private readonly byte[] _fonts =
-    {
+    [
         0xF0, 0x90, 0x90, 0x90, 0xF0, // 0
         0x20, 0x60, 0x20, 0x20, 0x70, // 1
         0xF0, 0x10, 0xF0, 0x80, 0xF0, // 2
@@ -25,7 +24,7 @@ public class Memory
         0xE0, 0x90, 0x90, 0x90, 0xE0, // D
         0xF0, 0x80, 0xF0, 0x80, 0xF0, // E
         0xF0, 0x80, 0xF0, 0x80, 0x80 // F
-    };
+    ];
 
     private readonly Random _random = new();
     public readonly bool[] Keypad = new bool[16];
@@ -34,11 +33,20 @@ public class Memory
     public readonly ushort[] Stack = new ushort[16];
     public readonly byte[] Video = new byte[2048];
 
-    public Memory()
+
+    public VirtualMachine(Spec spec)
     {
+        VideoWidth = spec.VideoWidth;
+        VideoHeight = spec.VideoHeight;
+        CharSize = spec.CharSize;
+
         PC = ProgramStartAddress;
         _fonts.CopyTo(RAM, 0);
     }
+
+    public ushort VideoWidth { get; }
+    public ushort VideoHeight { get; }
+    public byte CharSize { get; }
 
     public ushort I { get; set; }
     public ushort PC { get; set; }
@@ -53,10 +61,7 @@ public class Memory
         set => Registers[0xF] = value;
     }
 
-    public ushort Opcode
-    {
-        get => (ushort)(RAM[PC] << 8 | RAM[PC + 1]);
-    }
+    public ushort Opcode => (ushort)(RAM[PC] << 8 | RAM[PC + 1]);
 
     public void LoadRom(byte[] rom)
     {
